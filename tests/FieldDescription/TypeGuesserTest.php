@@ -34,7 +34,7 @@ final class TypeGuesserTest extends TestCase
     /**
      * @param array<string, mixed> $expectedOptions
      *
-     * @dataProvider guessDataProvider
+     * @dataProvider provideGuessCases
      */
     public function testGuess(
         int|string|null $mappingType,
@@ -56,7 +56,7 @@ final class TypeGuesserTest extends TestCase
     /**
      * @phpstan-return iterable<array-key, array{int|string|null, string, array<string, mixed>, int}>
      */
-    public function guessDataProvider(): iterable
+    public function provideGuessCases(): iterable
     {
         yield [
             null,
@@ -138,6 +138,13 @@ final class TypeGuesserTest extends TestCase
         yield [
             ClassMetadata::ONE_TO_MANY,
             FieldDescriptionInterface::TYPE_ONE_TO_MANY,
+            [],
+            Guess::HIGH_CONFIDENCE,
+        ];
+
+        yield [
+            'enum',
+            FieldDescriptionInterface::TYPE_ENUM,
             [],
             Guess::HIGH_CONFIDENCE,
         ];

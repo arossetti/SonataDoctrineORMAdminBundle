@@ -19,6 +19,7 @@ use Sonata\AdminBundle\Admin\AdminInterface;
 use Sonata\AdminBundle\Exception\NoValueException;
 use Sonata\AdminBundle\FieldDescription\FieldDescriptionInterface;
 use Sonata\DoctrineORMAdminBundle\FieldDescription\FieldDescription;
+use Sonata\DoctrineORMAdminBundle\Tests\Fixtures\Entity\Enum\Suit;
 
 final class FieldDescriptionTest extends TestCase
 {
@@ -251,8 +252,19 @@ final class FieldDescriptionTest extends TestCase
         static::assertSame('myMethodValue', $field->getValue($mockedObject));
     }
 
+    public function testEnum(): void
+    {
+        $fieldMapping = ['type' => 'string', 'enumType' => Suit::class];
+
+        $field = new FieldDescription('bar', [], $fieldMapping);
+
+        static::assertSame('string', $field->getType());
+        static::assertSame('enum', $field->getMappingType());
+        static::assertSame($fieldMapping, $field->getFieldMapping());
+    }
+
     /**
-     * @dataProvider getDescribesSingleValuedAssociationProvider
+     * @dataProvider provideDescribesSingleValuedAssociationCases
      */
     public function testDescribesSingleValuedAssociation(string|int $mappingType, bool $expected): void
     {
@@ -266,7 +278,7 @@ final class FieldDescriptionTest extends TestCase
     /**
      * @phpstan-return iterable<array-key, array{0: string|int, 1: bool}>
      */
-    public function getDescribesSingleValuedAssociationProvider(): iterable
+    public function provideDescribesSingleValuedAssociationCases(): iterable
     {
         yield 'one to one' => [ClassMetadata::ONE_TO_ONE, true];
         yield 'many to one' => [ClassMetadata::MANY_TO_ONE, true];
@@ -276,7 +288,7 @@ final class FieldDescriptionTest extends TestCase
     }
 
     /**
-     * @dataProvider getDescribesCollectionValuedAssociationProvider
+     * @dataProvider provideDescribesCollectionValuedAssociationCases
      */
     public function testDescribesCollectionValuedAssociation(string|int $mappingType, bool $expected): void
     {
@@ -290,7 +302,7 @@ final class FieldDescriptionTest extends TestCase
     /**
      * @phpstan-return iterable<array-key, array{0: string|int, 1: bool}>
      */
-    public function getDescribesCollectionValuedAssociationProvider(): iterable
+    public function provideDescribesCollectionValuedAssociationCases(): iterable
     {
         yield 'one to one' => [ClassMetadata::ONE_TO_ONE, false];
         yield 'many to one' => [ClassMetadata::MANY_TO_ONE, false];
